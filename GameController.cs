@@ -13,6 +13,8 @@ public class GameController : MonoBehaviour
     public Text bestScoreText;
     public int scoreSaved;
 
+    public bool isLevelOne = false;
+
     public AudioSource button;
 
     public static GameController Instance;
@@ -26,7 +28,9 @@ public class GameController : MonoBehaviour
         button = GetComponent<AudioSource>();
 
         scoreSaved = PlayerPrefs.GetInt("ScoreSaved");
-        bestScoreText.text = scoreSaved.ToString();
+        if(!isLevelOne){
+            bestScoreText.text = scoreSaved.ToString();
+        }
     }
 
     // Update is called once per frame
