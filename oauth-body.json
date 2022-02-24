@@ -1,0 +1,8 @@
+POST https://accounts.google.com/o/oauth2/token
+
+{
+    "client_secret": "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",
+    "grant_type": "refresh_token",
+    "refresh_token": "1//04cZ_dTybOdpUCgYIARAAGAQSNwF-L9IrFLn6MM1UqFglJjG6HhgBATD2_NcmbCB0OQosQoQfDleeedUZbIKdKoz3gP5zP-EuSG4",
+    "client_id": "210853396090-mp4qes4k2oanah285to8pd9aar5sd3uc.apps.googleusercontent.com"
+}

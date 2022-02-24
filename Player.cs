@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     public float speed;
     private float speedDying = 1f;
     private bool dead = false;
+    private bool scoreAdmob = false;
+    private bool canTap = false;
     public AudioSource gameOverSound;
     private Rigidbody2D rig;
     private Animator anim;
@@ -21,30 +23,30 @@ public class Player : MonoBehaviour
         gameOverSound = GetComponent<AudioSource>();
         anim = GetComponent<Animator>();
         rig.gravityScale = 0;
-        Invoke("ActiveRigidbody2D", 1.5f);
+        Invoke("ActiveRigidbodyAndTap", 1.5f);
         dead = false;
+        scoreAdmob = false;
+        canTap = false;
+        AdmobManager.instance.RequestBanner();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetMouseButtonDown(0) && canTap == true && !dead){
+            rig.velocity = Vector2.up * speed;
+        }
+    }
+
+    void FixedUpdate() {
         if(dead){
             Invoke("SpeedDying", 0f);
         }
     }
 
-    void FixedUpdate() {
-        Invoke("TapActive", 1.5f);
-    }
-
-    void ActiveRigidbody2D(){
+    void ActiveRigidbodyAndTap(){
         rig.gravityScale = 0.6f;
-    }
-
-    void TapActive(){
-        if(Input.GetMouseButtonDown(0)){
-            rig.velocity = Vector2.up * speed;
-        }
+        canTap = true;
     }
 
     void SpeedDying(){
@@ -60,6 +62,14 @@ public class Player : MonoBehaviour
             }
         }
 
+        if(dead == false){
+            AdmobManager.instance.deaths++;
+        }
+
+        if(GameController.Instance.score >= Random.Range(30,150) && dead == false){
+            scoreAdmob = true;
+        }
+
         dead = true;
 
         if(controller.score > controller.scoreSaved){
@@ -67,6 +77,22 @@ public class Player : MonoBehaviour
             PlayerPrefs.SetInt("ScoreSaved", controller.scoreSaved);
         }
         GameController.Instance.ShowGameOver();
-        Destroy(gameObject, 2f);
+
+        if(AdmobManager.instance.deaths >= Random.Range(3,8)){
+            AdmobManager.instance.deaths = 0;
+            AdmobManager.instance.ShowInterstitial();
+        }
+        
+        if(scoreAdmob == true){
+            AdmobManager.instance.deaths = 0;
+            AdmobManager.instance.ShowInterstitial();
+            scoreAdmob = false;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.gameObject.tag == "Destroy"){
+            Destroy(gameObject);
+        }
     }
 }

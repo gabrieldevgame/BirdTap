@@ -58,6 +58,7 @@ public class GameController : MonoBehaviour
     }
 
     public void RestartScene(){
+        AdmobManager.instance.DestroyBanner();
         SceneManager.LoadScene(1);
     }
 
